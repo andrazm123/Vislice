@@ -7,6 +7,7 @@ PRAVILNA_CRKA = "+"
 PONOVLJENA_CRKA = "o"
 NAPACNA_CRKA = "-"
 
+ZAČETEK = "s"
 ZMAGA = "w"
 PORAZ = "x"
 
@@ -69,15 +70,45 @@ class Igra:
 # Izluščimo vse slovenske besede.
 bazen_besed = []
 
-with open("\\Tomo\\Repozitorij\\vislice\\besede.txt", "r", encoding="utf-8") as datoteka:
+with open("Repozitorij/vislice/besede.txt", "r", encoding="utf-8") as datoteka:
     for vrstica in datoteka.readlines():
         beseda = vrstica.strip()
         bazen_besed.append(beseda)
 
-print(bazen_besed)
 
 def nova_igra():
     geslo = random.choice(bazen_besed)
     return Igra(geslo, [])
+
+
+class Vislice:
+
+    def __init__(self):
+        # V slovarju igre ima vsaka igra svoj celoštevilski id.
+        self.igre = {}
+
+    def prost_id_igre(self):
+        if self.igre == {}:
+            return 0
+        else:
+            # Preverimo za n+1 stevil izmed n iger
+            for i in range(len(self.igre) + 1):
+                if i not in self.igre.keys():
+                    return i
+    
+    def nova_igra(self):
+        # Naredi novo igro z naključnim geslom in shrani v slovar z novim ID, shrani (začetek, igra)
+        igra = nova_igra()
+        nov_id = self.prost_id_igre()
+        self.igre[nov_id] = (igra, ZAČETEK)
+        return nov_id
+
+    def ugibaj(self, id_igre, crka):
+        (igra, _) = self.igre[id_igre]
+        nov_poskus = igra.ugibaj(crka)
+        self.igre[id_igre] = (igra, nov_poskus)
+
+
+
 
 
